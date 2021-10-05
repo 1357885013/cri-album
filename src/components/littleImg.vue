@@ -12,7 +12,6 @@ export default {
   props: {
     name: String,
     src: String,
-    gridSize: [Number, String],
     blockWidth: [Number, String],
     blockHeight: [Number, String],
     maxHeight: [Number, String]
@@ -128,9 +127,8 @@ export default {
           standWidth *= 2;
         }
       }
-      console.log(that.gridSize)
-      that.style.gridColumn = "span " + parseInt(standWidth / that.gridSize);
-      that.style.gridRow = "span " + parseInt(standHeight / that.gridSize);
+      that.style.gridColumn = "span " + parseInt(standWidth / that.blockWidth);
+      that.style.gridRow = "span " + parseInt(standHeight / that.blockHeight);
     }
   }
 }

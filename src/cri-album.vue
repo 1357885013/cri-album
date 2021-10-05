@@ -1,9 +1,8 @@
 <template>
   <div class="home">
     <div class="imgs" @resize="resize" ref="images"
-         v-bind:style="{ display: 'grid', 'grid-template-rows': 'repeat(auto-fill,'+PGridSize+'px)', 'grid-template-columns': 'repeat(auto-fill,'+PGridSize+'px)',}">
+         v-bind:style="{ display: 'grid', 'grid-template-rows': 'repeat(auto-fill,'+blockHeight+'px)', 'grid-template-columns': 'repeat(auto-fill,'+blockWidth+'px)',}">
       <littleImg :blockHeight="blockHeight" :blockWidth="blockWidth"
-                 :gridSize="PGridSize"
                  :maxHeight=maxHeight
                  :src="pic.src" name="pic.name"
                  v-for="pic in pictures"></littleImg>
@@ -28,9 +27,8 @@ export default {
   },
   data: function () {
     return {
-      width: 1000,
+      width: 0,
       gridSize: 38,
-      PGridSize: 38,
       testMockVal: "test",
       picData: {},
       gridStyle: {},
@@ -47,13 +45,12 @@ export default {
   computed: {
     blockWidth: function () {
       let result = Math.floor(this.width / Math.round(this.width / this.blockSize))
-      this.PGridSize = Math.floor(result / Math.round(result / this.gridSize))
-      console.log('block size:' + result + '  grid size : ' + this.PGridSize)
-      console.log('block size remain:' + this.width % result + '  grid size total remain: ' + this.width % this.PGridSize + '  grid size remain" ' + result % this.PGridSize)
+      console.log('block size:' + result)
+      console.log('block size remain:' + this.width % result + '  grid size total remain: ')
       return result;
     },
     blockHeight: function () {
-      return this.PGridSize * Math.round(this.blockWidth / this.PGridSize * 0.8);
+      return Math.round(this.blockWidth * 0.8);
     }
   },
   mounted() {
@@ -63,7 +60,10 @@ export default {
         that.width = that.$refs.images.clientWidth;
       })()
     }
-    that.width = that.$refs.images.clientWidth;
+    this.$nextTick(() => {
+      // BUG: 图片加载完成后出现了滚动条, 把宽度挤小了, 这个变化resize事件捕获不到.
+      that.width = that.$refs.images.clientWidth;
+    });
   },
   created() {
     for (let key in this.pictures) {
