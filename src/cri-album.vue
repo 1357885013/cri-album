@@ -1,9 +1,9 @@
 <template>
   <div class="home">
-    <div class="imgs" @resize="resize"
-         v-bind:style="{ display: 'grid', 'grid-template-rows': 'repeat(auto-fill,16px)', 'grid-template-columns': 'repeat(auto-fill,16px)',}">
+    <div class="imgs" @resize="resize" ref="images"
+         v-bind:style="{ display: 'grid', 'grid-template-rows': 'repeat(auto-fill,'+PGridSize+'px)', 'grid-template-columns': 'repeat(auto-fill,'+PGridSize+'px)',}">
       <littleImg :blockHeight="blockHeight" :blockWidth="blockWidth"
-                 :gridSize="gridSize"
+                 :gridSize="PGridSize"
                  :maxHeight=maxHeight
                  :src="pic.src" name="pic.name"
                  v-for="pic in pictures"></littleImg>
@@ -28,36 +28,42 @@ export default {
   },
   data: function () {
     return {
+      width: 1000,
       gridSize: 38,
+      PGridSize: 38,
       testMockVal: "test",
       picData: {},
       gridStyle: {},
-      blockSize: 312,
+      blockSize: 212,
+      // private width
+      PBlockWidth: 0,
       picturesIndex: {}
     }
   },
   components: {
     littleImg
   },
+
   computed: {
     blockWidth: function () {
-      let remainder = this.blockSize % this.gridSize;
-      let widthGridCount = parseInt(this.blockSize / this.gridSize);
-      // let remainderEach = remainder / widthGridCount
-      // return blockSize + parseInt(remainderEach);
-      // 让 单位长宽正好是gridSize的整数倍
-      if (remainder > this.gridSize / 2) {
-        this.blockSize = this.blockSize + this.gridSize - remainder;
-        // widthGridCount++;
-      } else {
-        this.blockSize -= remainder;
-        // widthGridCount--;
-      }
-      return this.blockSize
+      let result = Math.floor(this.width / Math.round(this.width / this.blockSize))
+      this.PGridSize = Math.floor(result / Math.round(result / this.gridSize))
+      console.log('block size:' + result + '  grid size : ' + this.PGridSize)
+      console.log('block size remain:' + this.width % result + '  grid size total remain: ' + this.width % this.PGridSize + '  grid size remain" ' + result % this.PGridSize)
+      return result;
     },
     blockHeight: function () {
-      return this.gridSize * Math.round(this.blockWidth / this.gridSize * 0.8);
-    },
+      return this.PGridSize * Math.round(this.blockWidth / this.PGridSize * 0.8);
+    }
+  },
+  mounted() {
+    let that = this;
+    window.onresize = () => {
+      return (() => {
+        that.width = that.$refs.images.clientWidth;
+      })()
+    }
+    that.width = that.$refs.images.clientWidth;
   },
   created() {
     for (let key in this.pictures) {
@@ -95,8 +101,9 @@ export default {
   margin: 10px;
   grid-auto-flow: row dense;
   background-color: black;
-  grid-gap: 3px;
+  grid-gap: 0px;
   /*overflow: hidden;*/
+  justify-content: space-between;
 }
 
 .imgs > img {

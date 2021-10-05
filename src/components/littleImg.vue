@@ -37,6 +37,12 @@ export default {
     maxHeight: function (now, old) {
       this.getImgNaturalDimensions();
       this.computeSize();
+    },
+    blockWidth: function (now, old) {
+      this.computeSize();
+    },
+    blockHeight: function (now, old) {
+      this.computeSize();
     }
   },
   computed: {
@@ -107,7 +113,7 @@ export default {
       } else {
         nowRateO = {rate: minD / ratio, x: minD, y: ratio}
       }
-      console.log(nowRateO)
+      // console.log(nowRateO)
       let standHeight = that.blockHeight * nowRateO.y;
       let standWidth = that.blockWidth * nowRateO.x;
       // 放大
@@ -122,6 +128,7 @@ export default {
           standWidth *= 2;
         }
       }
+      console.log(that.gridSize)
       that.style.gridColumn = "span " + parseInt(standWidth / that.gridSize);
       that.style.gridRow = "span " + parseInt(standHeight / that.gridSize);
     }
