@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <div class="imgs" @resize="resize" ref="images"
-         v-bind:style="{ display: 'grid', 'grid-template-rows': 'repeat(auto-fill,'+blockHeight+'px)', 'grid-template-columns': 'repeat(auto-fill,'+blockWidth+'px)',}">
+         v-bind:style="{ display: 'grid',     'grid-auto-rows': blockHeight+'px', 'grid-template-columns': 'repeat(auto-fill,'+blockWidth+'px)',}">
       <littleImg :blockHeight="blockHeight" :blockWidth="blockWidth"
                  :maxHeight=maxHeight
                  :src="pic.src" name="pic.name"
@@ -90,54 +90,12 @@ export default {
 </script>
 
 <style>
-.folders {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-
-  margin-bottom: 30px;
-
-}
-
 .imgs {
   margin: 10px;
   grid-auto-flow: row dense;
-  background-color: black;
+  /*background-color: black;*/
   grid-gap: 0px;
   /*overflow: hidden;*/
   justify-content: space-between;
-}
-
-.imgs > img {
-  /*float: left;*/
-  /*object-fit: cover;*/
-}
-
-.folders > div {
-  float: left;
-  margin: 10px;
-}
-
-.title {
-  font-family: 'Microsoft Tai Le Bold', 'Microsoft Tai Le Regular', 'Microsoft Tai Le';
-  font-weight: 700;
-  font-style: normal;
-  font-size: 20px;
-  color: rgba(0, 0, 0, 0.847058823529412);
-  line-height: 28px;
-  letter-spacing: 2px;
-
-  margin-bottom: 5px;
-}
-
-.title > span {
-  margin-left: 8px;
-  font-family: 'Microsoft Tai Le';
-  font-weight: 400;
-  font-style: normal;
-  font-size: 14px;
-  color: rgba(0, 0, 0, 0.447058823529412);
-  line-height: 22px;
 }
 </style>

@@ -1,8 +1,13 @@
 <template>
   <div :style="style">
-    <img :src="src" alt="" @mouseenter="mouseEnter" @mouseleave="mouseLeave"
-         :style="{width:width,height:height,objectFit: objectFit }"
-         class="img" ref="image">
+    <div class="img-wrapper-out">
+      <div class="img-wrapper">
+        <div @mouseenter="mouseEnter" @mouseleave="mouseLeave"
+             :style="{width:width,height:height,backgroundSize: objectFit,backgroundImage:'url('+src+')' }"
+             class="img" ref="image">
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -70,10 +75,11 @@ export default {
         var nImg = new Image();
         let that = this;
         nImg.onload = function () {
-          that.oW = oImg.width;
-          that.oH = oImg.Height;
+          that.oW = nImg.width;
+          that.oH = nImg.height;
+          that.computeSize();
         };
-        nImg.src = oImg.src;
+        nImg.src = this.src;
       }
     },
     computeSize: function () {
@@ -136,10 +142,25 @@ export default {
 
 <style scoped>
 .img {
-  /*width: 100%;*/
-  /*height: 100%;*/
-  /*object-fit: cover;*/
-  /*border: 1px solid #666666;*/
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
+.img-wrapper-out {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.img-wrapper {
+  position: absolute;
+  right: 2px;
+  left: 2px;
+  bottom: 2px;
+  top: 2px;
+  border-radius: 2px;
+  border: 1px solid #0000009c;
+}
 </style>

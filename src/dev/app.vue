@@ -5,7 +5,7 @@
       <a-slider v-model="maxHeight" :min="1" :max="2000"/>
       <!--      <crimson-album :pictures="pictures" :max-height="maxHeight"/>-->
       <cri-album :pictures="pictures" :max-height="maxHeight"/>
-      <a-slider v-model="maxHeight" :min="1" :max="2000" @change="locationImages"/>
+      <a-slider v-model="maxHeight" :min="1" :max="2000"/>
     </div>
   </div>
 </template>
@@ -59,34 +59,6 @@ export default {
 </script>
 
 <style>
-.folders {
-  width: 100%;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-start;
-
-  margin-bottom: 30px;
-
-}
-
-.imgs {
-  margin: 10px;
-  grid-auto-flow: row dense;
-  background-color: black;
-  grid-gap: 3px;
-  /*overflow: hidden;*/
-}
-
-.imgs > img {
-  /*float: left;*/
-  /*object-fit: cover;*/
-}
-
-.folders > div {
-  float: left;
-  margin: 10px;
-}
-
 .title {
   font-family: 'Microsoft Tai Le Bold', 'Microsoft Tai Le Regular', 'Microsoft Tai Le';
   font-weight: 700;
