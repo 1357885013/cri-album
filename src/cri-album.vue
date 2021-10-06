@@ -60,6 +60,9 @@ export default {
         that.width = that.$refs.images.clientWidth;
       })()
     }
+    setTimeout(function () {
+      that.width = that.$refs.images.clientWidth;
+    }, 200)
     this.$nextTick(() => {
       // BUG: 图片加载完成后出现了滚动条, 把宽度挤小了, 这个变化resize事件捕获不到.
       that.width = that.$refs.images.clientWidth;

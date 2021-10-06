@@ -2,11 +2,10 @@
   <div id="app">
     <div>
       <p class="title">图片<span>共21个</span></p>
-      <a-slider v-model="maxHeight" :min="1" :max="2000" />
-<!--      <crimson-album :pictures="pictures" :max-height="maxHeight"/>-->
+      <a-slider v-model="maxHeight" :min="1" :max="2000"/>
+      <!--      <crimson-album :pictures="pictures" :max-height="maxHeight"/>-->
       <cri-album :pictures="pictures" :max-height="maxHeight"/>
-<!--      <a-slider v-model="maxHeight" :min="1" :max="2000" @change="locationImages"/>-->
-      <a-button>123</a-button>
+      <a-slider v-model="maxHeight" :min="1" :max="2000" @change="locationImages"/>
     </div>
   </div>
 </template>
@@ -17,7 +16,7 @@ import CriAlbum from "../cri-album";
 
 export default {
   name: 'app',
-  components: {CrimsonAlbum,CriAlbum},
+  components: {CrimsonAlbum, CriAlbum},
   data: function () {
     return {
       pictures: [],
