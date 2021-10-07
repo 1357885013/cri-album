@@ -1,9 +1,14 @@
 import Vue from 'vue';
-import Button from 'ant-design-vue/lib/button';
 import 'ant-design-vue/dist/antd.css';
+
+import Button from 'ant-design-vue/lib/button';
 import Slider from 'ant-design-vue/lib/slider';
-Vue.component(Button.name, Button);
-Vue.component(Slider.name, Slider);
+import Radio from 'ant-design-vue/lib/radio';
+
+Button.install(Vue);
+Slider.install(Vue)
+Radio.install(Vue);
+
 var album = require('./app.vue');
 var sMd = require('../index.js');
 

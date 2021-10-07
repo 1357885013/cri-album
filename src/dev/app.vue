@@ -1,10 +1,18 @@
 <template>
   <div id="app">
     <div>
+      <a-radio-group v-model="which" button-style="solid">
+        <a-radio-button value="cri">
+          cri-album
+        </a-radio-button>
+        <a-radio-button value="crimson">
+          crimson-album
+        </a-radio-button>
+      </a-radio-group>
       <p class="title">图片<span>共21个</span></p>
       <a-slider v-model="maxHeight" :min="1" :max="2000"/>
-      <!--      <crimson-album :pictures="pictures" :max-height="maxHeight"/>-->
-      <cri-album :pictures="pictures" :max-height="maxHeight"/>
+      <cri-album v-if="which==='cri'" :pictures="pictures" :max-height="maxHeight"/>
+      <crimson-album v-else :pictures="pictures" :max-height="maxHeight"/>
       <a-slider v-model="maxHeight" :min="1" :max="2000"/>
     </div>
   </div>
@@ -20,7 +28,8 @@ export default {
   data: function () {
     return {
       pictures: [],
-      maxHeight: 499
+      maxHeight: 499,
+      which: "cri"
     }
   },
   watch: {},
@@ -53,6 +62,15 @@ export default {
       {src: "img/warm.jpg", name: "warm"},
       {src: "img/镂空垃圾桶.svg", name: "镂空垃圾桶"}
     ]
+    // 保存状态,方便调试
+    let t = localStorage.getItem("which");
+    if (t) this.which = t;
+    let that = this;
+    window.onbeforeunload = function () {
+      localStorage.setItem("which", that.which);
+    }
+  },
+  beforeDestroy() {
   },
   methods: {}
 }
