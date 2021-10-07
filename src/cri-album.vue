@@ -89,13 +89,12 @@ export default {
 }
 </script>
 
-<style>
-.imgs {
-  margin: 10px;
-  grid-auto-flow: row dense;
+<style lang="stylus" rel="stylesheet/stylus" scoped>
+.imgs
+  margin: 10px
+  grid-auto-flow: row dense
   /*background-color: black;*/
-  grid-gap: 0px;
+  grid-gap: 0px
   /*overflow: hidden;*/
-  justify-content: space-between;
-}
+  justify-content: space-between
 </style>

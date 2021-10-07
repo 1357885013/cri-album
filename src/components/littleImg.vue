@@ -140,27 +140,22 @@ export default {
 }
 </script>
 
-<style scoped>
-.img {
-  width: 100%;
-  height: 100%;
-  background-repeat: no-repeat;
-  background-position: center;
-}
-
-.img-wrapper-out {
-  width: 100%;
-  height: 100%;
-  position: relative;
-}
-
-.img-wrapper {
-  position: absolute;
-  right: 2px;
-  left: 2px;
-  bottom: 2px;
-  top: 2px;
-  border-radius: 2px;
-  border: 1px solid #0000009c;
-}
+<style lang="stylus" rel="stylesheet/stylus" scoped>
+.img-wrapper-out
+  width: 100%
+  height: 100%
+  position: relative
+  &>.img-wrapper
+    position: absolute
+    right: 2px
+    left: 2px
+    bottom: 2px
+    top: 2px
+    border-radius: 2px
+    border: 1px solid #0000009c
+    &>.img
+      width: 100%
+      height: 100%
+      background-repeat: no-repeat
+      background-position: center
 </style>
