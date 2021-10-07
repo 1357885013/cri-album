@@ -32,8 +32,7 @@ export default {
       objectFit: 'cover',
       style: {
         gridRow: "span 1",
-        gridColumn: "span 1",
-        overflow: "hidden",
+        gridColumn: "span 1"
       }
     }
   },
@@ -141,21 +140,26 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
+padding = 4px
 .img-wrapper-out
-  width: 100%
-  height: 100%
-  position: relative
-  &>.img-wrapper
-    position: absolute
-    right: 2px
-    left: 2px
-    bottom: 2px
-    top: 2px
-    border-radius: 2px
-    border: 1px solid #0000009c
-    &>.img
-      width: 100%
-      height: 100%
-      background-repeat: no-repeat
-      background-position: center
+  width 100%
+  height 100%
+  position relative
+
+  & > .img-wrapper
+    position absolute
+    right padding
+    left padding
+    bottom padding
+    top padding
+    border-radius 2px
+    //border 1px solid #0000009c
+    //box-shadow 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)
+    box-shadow 0 6px 13px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22)
+
+    & > .img
+      width 100%
+      height 100%
+      background-repeat no-repeat
+      background-position center
 </style>

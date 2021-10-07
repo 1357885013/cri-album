@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div class="imgs" ref="images">
+    <div class="images" ref="images">
       <img :src="pic.src" :ref="pic.name" @load="loadOnePic(pic.name)" :height="pic.height" :id="pic.name"
            v-for="pic in pictures"/>
     </div>
@@ -214,12 +214,12 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-.imgs
-  margin: 10px
-  grid-auto-flow: row dense
-  background-color: black
-  grid-gap: 3px
+.images
+  margin 10px
+  grid-auto-flow row dense
+  background-color black
+  grid-gap 3px
 
   & > img
-    object-fit: cover
+    object-fit cover
 </style>

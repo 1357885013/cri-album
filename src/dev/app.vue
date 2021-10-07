@@ -60,21 +60,21 @@ export default {
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
 .title
-  font-family: 'Microsoft Tai Le Bold', 'Microsoft Tai Le Regular', 'Microsoft Tai Le'
-  font-weight: 700
-  font-style: normal
-  font-size: 20px
-  color: rgba(0, 0, 0, 0.847058823529412)
-  line-height: 28px
-  letter-spacing: 2px
-  margin-bottom: 5px
+  font-family 'Microsoft Tai Le Bold', 'Microsoft Tai Le Regular', 'Microsoft Tai Le'
+  font-weight 700
+  font-style normal
+  font-size 20px
+  color rgba(0, 0, 0, 0.847058823529412)
+  line-height 28px
+  letter-spacing 2px
+  margin-bottom 5px
 
   & > span
-    margin-left: 8px
-    font-family: 'Microsoft Tai Le'
-    font-weight: 400
-    font-style: normal
-    font-size: 14px
-    color: rgba(0, 0, 0, 0.447058823529412)
-    line-height: 22px
+    margin-left 8px
+    font-family 'Microsoft Tai Le'
+    font-weight 400
+    font-style normal
+    font-size 14px
+    color rgba(0, 0, 0, 0.447058823529412)
+    line-height 22px
 </style>

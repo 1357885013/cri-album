@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <div class="imgs" @resize="resize" ref="images"
-         v-bind:style="{ display: 'grid',     'grid-auto-rows': blockHeight+'px', 'grid-template-columns': 'repeat(auto-fill,'+blockWidth+'px)',}">
+    <div class="images" @resize="resize" ref="images"
+         v-bind:style="{ 'grid-auto-rows': blockHeight+'px', 'grid-template-columns': 'repeat(auto-fill,'+blockWidth+'px)',}">
       <littleImg :blockHeight="blockHeight" :blockWidth="blockWidth"
                  :maxHeight=maxHeight
                  :src="pic.src" name="pic.name"
@@ -90,11 +90,12 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-.imgs
-  margin: 10px
-  grid-auto-flow: row dense
-  /*background-color: black;*/
-  grid-gap: 0px
-  /*overflow: hidden;*/
-  justify-content: space-between
+.images
+  display grid
+  margin 10px
+  grid-auto-flow row dense
+  /*background-color black*/
+  grid-gap 0px
+  /*overflow hidden*/
+  justify-content space-between
 </style>
