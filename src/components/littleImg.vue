@@ -19,19 +19,25 @@ export default {
     src: String,
     blockWidth: [Number, String],
     blockHeight: [Number, String],
-    maxHeight: [Number, String],
+    maxHeight: [Number, String]
     // 图片被遮住的长度, 负的是高,正的是宽
-    coverLength: null
   },
   data: function () {
     return {
       oW: 0,
       oH: 0,
+      // 显示的宽高,需要调用computeCoverLength() 刷新
+      width: null,
+      height: null,
       objectFit: 'cover',
+      coverLength: null,
       style: {
         gridRow: "span 1",
         gridColumn: "span 1"
-      }
+      },
+      backgroundPosition: 'center',
+      // is width big then height
+      WBTH: null
     }
   },
   watch: {
@@ -49,9 +55,6 @@ export default {
   computed: {
     standRate: function () {
       return this.blockWidth / this.blockHeight;
-    },
-    backgroundPosition: function () {
-      return 'center';
     }
   },
   mounted() {
@@ -60,13 +63,21 @@ export default {
   },
   methods: {
     mouseEnter: function () {
+      this.computeCoverLength();
       this.objectFit = 'contain';
-      console.log(this.coverLength);
     },
     mouseLeave: function () {
       this.objectFit = 'cover';
+      this.backgroundPosition = 'center';
     },
-    mouseMove: function () {
+    mouseMove: function (e) {
+      if (this.WBTH) {
+        let rate = e.offsetX / this.width * -2;
+        this.backgroundPosition = this.coverLength * rate + 'px center';
+      } else {
+        let rate = e.offsetY / this.height * -2;
+        this.backgroundPosition = 'center ' + (this.coverLength * rate) + 'px';
+      }
       this.objectFit = 'cover';
     },
     getImgNaturalDimensions: function () {
@@ -92,17 +103,15 @@ export default {
       let realRate = origin.w / origin.h;
       let rw = (origin.w / that.blockWidth);
       let rh = (origin.h / that.blockHeight);
-      // is width big then height
-      let WBTH;
       let ratio;
       if (rw >= rh) {
         // 宽图片
-        WBTH = true;
+        this.WBTH = true;
         // 让分子为1
         ratio = Math.round(rw / rh);
       } else {
         // 高图片
-        WBTH = false;
+        this.WBTH = false;
         // 让分子为1
         ratio = Math.round(rh / rw);
       }
@@ -121,35 +130,41 @@ export default {
       ratio = Math.round(ratio * minD);
       let nowRateO;
       // 算出宽高比例
-      if (WBTH) {
+      if (this.WBTH) {
         nowRateO = {rate: ratio / minD, x: ratio, y: minD};
       } else {
         nowRateO = {rate: minD / ratio, x: minD, y: ratio}
       }
-      // console.log(nowRateO)
-      // 算出 显示高度
-      let showHeight = that.blockHeight * nowRateO.y;
-      let showWidth = that.blockWidth * nowRateO.x;
+      // 算出 显示高度 , !!!!!!!!! grid 会自适应宽高
+      this.height = that.blockHeight * nowRateO.y;
+      this.width = that.blockWidth * nowRateO.x;
       // 放大
       if (realRate < nowRateO.rate) {
-        if (showWidth / origin.w < 0.4) {
-          showHeight *= 2;
-          showWidth *= 2;
+        if (this.width / origin.w < 0.4) {
+          this.height *= 2;
+          this.width *= 2;
         }
       } else {
-        if (showHeight / origin.h < 0.4) {
-          showHeight *= 2;
-          showWidth *= 2;
+        if (this.height / origin.h < 0.4) {
+          this.height *= 2;
+          this.width *= 2;
         }
       }
-      // 算出被遮盖的宽/高度
-      if (WBTH)
-        this.coverLength = (origin.w - (origin.h / showHeight * showWidth)) / 2;
-      else
-        this.coverLength = -(origin.w - (origin.h / showHeight * showWidth)) / 2;
-
-      that.style.gridColumn = "span " + parseInt(showWidth / that.blockWidth);
-      that.style.gridRow = "span " + parseInt(showHeight / that.blockHeight);
+      that.style.gridColumn = "span " + parseInt(this.width / that.blockWidth);
+      that.style.gridRow = "span " + parseInt(this.height / that.blockHeight);
+    },
+    // 算出被遮盖的宽/高度
+    computeCoverLength: function () {
+      let img = this.$refs.image;
+      this.width = img.clientWidth;
+      this.height = img.clientHeight;
+      if (this.oW / this.width > this.oH / this.height) {
+        this.WBTH = true;
+        this.coverLength = ((this.oW * this.height / this.oH) - this.width) / 2;
+      } else {
+        this.WBTH = false;
+        this.coverLength = ((this.oH * this.width / this.oW) - this.height) / 2;
+      }
     }
   }
 }
