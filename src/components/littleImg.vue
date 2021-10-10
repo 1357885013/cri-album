@@ -2,8 +2,8 @@
   <div :style="style">
     <div class="img-wrapper-out">
       <div class="img-wrapper">
-        <div @mouseenter="mouseEnter" @mouseleave="mouseLeave"
-             :style="{width:width,height:height,backgroundSize: objectFit,backgroundImage:'url('+src+')' }"
+        <div @mouseenter="mouseEnter" @mouseleave="mouseLeave" @mousemove="mouseMove"
+             :style="{backgroundPosition:backgroundPosition,backgroundSize: objectFit,backgroundImage:'url('+src+')' }"
              class="img" ref="image">
         </div>
       </div>
@@ -19,16 +19,14 @@ export default {
     src: String,
     blockWidth: [Number, String],
     blockHeight: [Number, String],
-    maxHeight: [Number, String]
+    maxHeight: [Number, String],
+    // 图片被遮住的长度, 负的是高,正的是宽
+    coverLength: null
   },
   data: function () {
     return {
       oW: 0,
       oH: 0,
-      computedW: 0,
-      computedH: 0,
-      width: '100%',
-      height: '100%',
       objectFit: 'cover',
       style: {
         gridRow: "span 1",
@@ -51,6 +49,9 @@ export default {
   computed: {
     standRate: function () {
       return this.blockWidth / this.blockHeight;
+    },
+    backgroundPosition: function () {
+      return 'center';
     }
   },
   mounted() {
@@ -60,8 +61,12 @@ export default {
   methods: {
     mouseEnter: function () {
       this.objectFit = 'contain';
+      console.log(this.coverLength);
     },
     mouseLeave: function () {
+      this.objectFit = 'cover';
+    },
+    mouseMove: function () {
       this.objectFit = 'cover';
     },
     getImgNaturalDimensions: function () {
@@ -87,18 +92,21 @@ export default {
       let realRate = origin.w / origin.h;
       let rw = (origin.w / that.blockWidth);
       let rh = (origin.h / that.blockHeight);
-      let wBTH;
+      // is width big then height
+      let WBTH;
       let ratio;
       if (rw >= rh) {
-        wBTH = true;
-        // 超宽
+        // 宽图片
+        WBTH = true;
+        // 让分子为1
         ratio = Math.round(rw / rh);
       } else {
-        wBTH = false;
-        // 超长
+        // 高图片
+        WBTH = false;
+        // 让分子为1
         ratio = Math.round(rh / rw);
       }
-      // 通过完整放大让其中一方=整数
+      // 通过放大让分母约等于整数
       let ds = [1, 2, 3, 4, 5]
       let minD = Number.MAX_VALUE;
       let min = Number.MAX_VALUE;
@@ -112,28 +120,36 @@ export default {
       }
       ratio = Math.round(ratio * minD);
       let nowRateO;
-      if (wBTH) {
+      // 算出宽高比例
+      if (WBTH) {
         nowRateO = {rate: ratio / minD, x: ratio, y: minD};
       } else {
         nowRateO = {rate: minD / ratio, x: minD, y: ratio}
       }
       // console.log(nowRateO)
-      let standHeight = that.blockHeight * nowRateO.y;
-      let standWidth = that.blockWidth * nowRateO.x;
+      // 算出 显示高度
+      let showHeight = that.blockHeight * nowRateO.y;
+      let showWidth = that.blockWidth * nowRateO.x;
       // 放大
       if (realRate < nowRateO.rate) {
-        if (standWidth / origin.w < 0.4) {
-          standHeight *= 2;
-          standWidth *= 2;
+        if (showWidth / origin.w < 0.4) {
+          showHeight *= 2;
+          showWidth *= 2;
         }
       } else {
-        if (standHeight / origin.h < 0.4) {
-          standHeight *= 2;
-          standWidth *= 2;
+        if (showHeight / origin.h < 0.4) {
+          showHeight *= 2;
+          showWidth *= 2;
         }
       }
-      that.style.gridColumn = "span " + parseInt(standWidth / that.blockWidth);
-      that.style.gridRow = "span " + parseInt(standHeight / that.blockHeight);
+      // 算出被遮盖的宽/高度
+      if (WBTH)
+        this.coverLength = (origin.w - (origin.h / showHeight * showWidth)) / 2;
+      else
+        this.coverLength = -(origin.w - (origin.h / showHeight * showWidth)) / 2;
+
+      that.style.gridColumn = "span " + parseInt(showWidth / that.blockWidth);
+      that.style.gridRow = "span " + parseInt(showHeight / that.blockHeight);
     }
   }
 }
@@ -155,11 +171,10 @@ padding = 4px
     border-radius 2px
     //border 1px solid #0000009c
     //box-shadow 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)
-    box-shadow 0 6px 13px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22)
+    box-shadow 0 6px 13px rgba(0, 0, 0, 0.25), 0 5px 5px rgba(0, 0, 0, 0.22)
 
     & > .img
       width 100%
       height 100%
       background-repeat no-repeat
-      background-position center
 </style>
