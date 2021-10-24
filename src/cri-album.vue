@@ -14,7 +14,6 @@
 import littleImg from './components/littleImg.vue'
 
 export default {
-  name: 'home',
   props: {
     pictures: {
       type: Array,
@@ -95,7 +94,7 @@ export default {
   margin 10px
   grid-auto-flow row dense
   /*background-color black*/
-  grid-gap 0px
+  grid-gap 0
   /*overflow hidden*/
   justify-content space-between
 </style>

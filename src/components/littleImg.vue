@@ -192,4 +192,8 @@ padding = 4px
       width 100%
       height 100%
       background-repeat no-repeat
+      //transition-property all
+      //transition-duration .1s
+      //transition-timing-function linear
+      //transition-delay 0s
 </style>
