@@ -11,7 +11,9 @@
       </a-radio-group>
       <p class="title">图片<span>共21个</span></p>
       <a-slider v-model="maxHeight" :min="1" :max="2000"/>
-      <cri-album v-if="which==='cri'" :pictures="pictures" :max-height="maxHeight"/>
+      <cri-album v-if="which==='cri'" :pictures="pictures" :max-height="maxHeight">
+        <template  v-slot="prop"><span class="img-title">{{prop.item.name}}</span></template>
+      </cri-album>
       <crimson-album v-else :pictures="pictures" :max-height="maxHeight"/>
       <a-slider v-model="maxHeight" :min="1" :max="2000"/>
     </div>
@@ -95,4 +97,7 @@ export default {
     font-size 14px
     color rgba(0, 0, 0, 0.447058823529412)
     line-height 22px
+.img-title{
+  color red;
+}
 </style>

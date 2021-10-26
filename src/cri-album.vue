@@ -2,10 +2,15 @@
   <div class="home">
     <div class="images" @resize="resize" ref="images"
          v-bind:style="{ 'grid-auto-rows': blockHeight+'px', 'grid-template-columns': 'repeat(auto-fill,'+blockWidth+'px)',}">
-      <littleImg :blockHeight="blockHeight" :blockWidth="blockWidth"
-                 :maxHeight=maxHeight
-                 :src="pic.src" name="pic.name"
-                 v-for="pic in pictures"></littleImg>
+      <littleImg
+        v-for="(pic,index) in pictures"
+        :pic="pic"
+        :index="index"
+        :blockHeight="blockHeight"
+        :blockWidth="blockWidth"
+        :maxHeight=maxHeight>
+        <template v-slot="prop"><slot :index="prop.index" :item="prop.item" ></slot></template>
+      </littleImg>
     </div>
   </div>
 </template>

@@ -3,8 +3,9 @@
     <div class="img-wrapper-out">
       <div class="img-wrapper">
         <div @mouseenter="mouseEnter" @mouseleave="mouseLeave" @mousemove="mouseMove"
-             :style="{backgroundPosition:backgroundPosition,backgroundSize: objectFit,backgroundImage:'url('+src+')' }"
+             :style="{backgroundPosition:backgroundPosition,backgroundSize: objectFit,backgroundImage:'url('+pic.src+')' }"
              class="img" ref="image">
+          <slot :index="index" :item="pic" ></slot>
         </div>
       </div>
     </div>
@@ -15,8 +16,8 @@
 export default {
   name: "littleImg",
   props: {
-    name: String,
-    src: String,
+    pic:Object,
+    index:Number,
     blockWidth: [Number, String],
     blockHeight: [Number, String],
     maxHeight: [Number, String]
@@ -94,7 +95,7 @@ export default {
           that.oH = nImg.height;
           that.computeSize();
         };
-        nImg.src = this.src;
+        nImg.src = this.pic.src;
       }
     },
     computeSize: function () {
