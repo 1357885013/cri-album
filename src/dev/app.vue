@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <div>
+      <button @click="changeUrl">change url</button>
       <a-radio-group v-model="which" button-style="solid">
         <a-radio-button value="cri">
           cri-album
@@ -12,7 +13,7 @@
       <p class="title">图片<span>共21个</span></p>
       <a-slider v-model="maxHeight" :min="1" :max="2000"/>
       <cri-album v-if="which==='cri'" :pictures="pictures" :max-height="maxHeight">
-        <template  v-slot="prop"><span class="img-title">{{prop.item.name}}</span></template>
+        <template v-slot="{item,index}"><span class="img-title">{{ item.name }}</span></template>
       </cri-album>
       <crimson-album v-else :pictures="pictures" :max-height="maxHeight"/>
       <a-slider v-model="maxHeight" :min="1" :max="2000"/>
@@ -40,7 +41,7 @@ export default {
     this.pictures = [
       {src: "img/1994_1.gif", name: "1994_1"},
       {src: "img/1994_2.jpg", name: "1994_2"},
-      {src: "img/1994_all.jpg", name: "1994_all"},
+      {src: "img/1994_all.jpg", name: "1994_all", width: 1728, height: 1080},
       {src: "img/1994_close.jpg", name: "1994_close"},
       {src: "img/1994_love.jpg", name: "1994_love"},
       {src: "img/blackBorder.jpg", name: "blackBorder"},
@@ -74,7 +75,24 @@ export default {
   },
   beforeDestroy() {
   },
-  methods: {}
+  methods: {
+    changeUrl: function () {
+      let pics = this.pictures;
+      window.pics = pics;
+      let l = Math.round(Math.random() * (pics.length - 1));
+      let r;
+      do {
+        r = Math.round(Math.random() * (pics.length - 1));
+      } while (l === r && pics.length > 1)
+      let temp = pics[l];
+      this.$set(pics, l, pics[r]);
+      this.$set(pics, r, temp);
+      console.log(l + ' ' + r);
+      for (let i = 0; i < pics.length; i++) {
+        console.log(pics[i].src + '\n')
+      }
+    }
+  }
 }
 </script>
 
@@ -97,7 +115,8 @@ export default {
     font-size 14px
     color rgba(0, 0, 0, 0.447058823529412)
     line-height 22px
-.img-title{
+
+.img-title {
   color red;
 }
 </style>

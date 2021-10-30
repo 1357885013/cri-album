@@ -5,7 +5,7 @@
         <div @mouseenter="mouseEnter" @mouseleave="mouseLeave" @mousemove="mouseMove"
              :style="{backgroundPosition:backgroundPosition,backgroundSize: objectFit,backgroundImage:'url('+pic.src+')' }"
              class="img" ref="image">
-          <slot :index="index" :item="pic" ></slot>
+          <slot :index="index" :item="pic"></slot>
         </div>
       </div>
     </div>
@@ -16,12 +16,11 @@
 export default {
   name: "littleImg",
   props: {
-    pic:Object,
-    index:Number,
+    pic: Object,
+    index: Number,
     blockWidth: [Number, String],
     blockHeight: [Number, String],
     maxHeight: [Number, String]
-    // 图片被遮住的长度, 负的是高,正的是宽
   },
   data: function () {
     return {
@@ -31,6 +30,7 @@ export default {
       width: null,
       height: null,
       objectFit: 'cover',
+      // 图片被遮住的长度, 负的是高,正的是宽
       coverLength: null,
       style: {
         gridRow: "span 1",
@@ -45,6 +45,10 @@ export default {
     maxHeight: function (now, old) {
       this.getImgNaturalDimensions();
       this.computeSize();
+    },
+    'pic.src': function (now, old) {
+      console.log('src changed');
+      this.getImgNaturalDimensions()
     },
     blockWidth: function (now, old) {
       this.computeSize();
@@ -82,15 +86,23 @@ export default {
       this.objectFit = 'cover';
     },
     getImgNaturalDimensions: function () {
-      // console.log(oImg)
+      let hasSize = false;
+      if (this.pic.width && this.pic.height) {
+        this.oW = this.pic.width;
+        this.oH = this.pic.height;
+        this.computeSize();
+        hasSize = true;
+      }
       let oImg = this.$refs.image;
       if (oImg.naturalWidth) { // 现代浏览器
         this.oW = oImg.naturalWidth;
         this.oH = oImg.naturalHeight;
       } else { // IE6/7/8
-        var nImg = new Image();
+        let nImg = new Image();
         let that = this;
         nImg.onload = function () {
+          if (hasSize && that.oW === nImg.width && that.oH === nImg.height)
+            return;
           that.oW = nImg.width;
           that.oH = nImg.height;
           that.computeSize();
