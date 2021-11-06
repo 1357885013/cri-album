@@ -1,12 +1,10 @@
 <template>
   <div :style="style">
     <div class="img-wrapper-out">
-      <div class="img-wrapper">
-        <div @mouseenter="mouseEnter" @mouseleave="mouseLeave" @mousemove="mouseMove"
-             :style="{backgroundPosition:backgroundPosition,backgroundSize: objectFit,backgroundImage:'url('+pic.src+')' }"
-             class="img" ref="image">
-          <slot :index="index" :item="pic"></slot>
-        </div>
+      <div class="img-wrapper" ref="image" @mouseenter="mouseEnter" @mouseleave="mouseLeave" @mousemove="mouseMove">
+        <img :src="pic.src" :style="{width:styleImg.width,height:styleImg.height,transform:styleImg.transform}"
+             class="img" alt="不支持的类型">
+        <slot :index="index" :item="pic"></slot>
       </div>
     </div>
   </div>
@@ -29,16 +27,21 @@ export default {
       // 显示的宽高,需要调用computeCoverLength() 刷新
       width: null,
       height: null,
-      objectFit: 'cover',
       // 图片被遮住的长度, 负的是高,正的是宽
       coverLength: null,
       style: {
         gridRow: "span 1",
         gridColumn: "span 1"
       },
+      styleImg: {
+        width: "100%",
+        height: "100%",
+        transform: null
+      },
       backgroundPosition: 'center',
       // is width big then height
-      WBTH: null
+      WBTH: null,
+      $img: null
     }
   },
   watch: {
@@ -48,6 +51,7 @@ export default {
     },
     'pic.src': function (now, old) {
       console.log('src changed');
+      this.styleImg.transform = null;
       this.getImgNaturalDimensions()
     },
     blockWidth: function (now, old) {
@@ -69,21 +73,18 @@ export default {
   methods: {
     mouseEnter: function () {
       this.computeCoverLength();
-      this.objectFit = 'contain';
     },
     mouseLeave: function () {
-      this.objectFit = 'cover';
-      this.backgroundPosition = 'center';
     },
     mouseMove: function (e) {
+      // the movement is not smooth when the debug is turn on in browser;
       if (this.WBTH) {
         let rate = e.offsetX / this.width * -2;
-        this.backgroundPosition = this.coverLength * rate + 'px center';
+        this.styleImg.transform = "translateX(" + this.coverLength * rate + "px)";
       } else {
         let rate = e.offsetY / this.height * -2;
-        this.backgroundPosition = 'center ' + (this.coverLength * rate) + 'px';
+        this.styleImg.transform = "translateY(" + this.coverLength * rate + "px)";
       }
-      this.objectFit = 'cover';
     },
     getImgNaturalDimensions: function () {
       let hasSize = false;
@@ -165,6 +166,9 @@ export default {
       }
       that.style.gridColumn = "span " + parseInt(this.width / that.blockWidth);
       that.style.gridRow = "span " + parseInt(this.height / that.blockHeight);
+      that.$nextTick(function () {
+        that.computeCoverLength();
+      })
     },
     // 算出被遮盖的宽/高度
     computeCoverLength: function () {
@@ -174,9 +178,17 @@ export default {
       if (this.oW / this.width > this.oH / this.height) {
         this.WBTH = true;
         this.coverLength = ((this.oW * this.height / this.oH) - this.width) / 2;
+        this.styleImg.width = "auto";
+        this.styleImg.height = "100%";
+        if (this.styleImg.transform === null)
+          this.styleImg.transform = "translateX(-" + this.coverLength / 2 + "px)";
       } else {
         this.WBTH = false;
         this.coverLength = ((this.oH * this.width / this.oW) - this.height) / 2;
+        this.styleImg.width = "100%";
+        this.styleImg.height = "auto";
+        if (this.styleImg.transform === null)
+          this.styleImg.transform = "translateY(-" + this.coverLength / 2 + "px)";
       }
     }
   }
@@ -197,16 +209,12 @@ padding = 4px
     bottom padding
     top padding
     border-radius 2px
-    //border 1px solid #0000009c
-    //box-shadow 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22)
     box-shadow 0 6px 13px rgba(0, 0, 0, 0.25), 0 5px 5px rgba(0, 0, 0, 0.22)
+    overflow hidden
 
     & > .img
-      width 100%
-      height 100%
-      background-repeat no-repeat
-      //transition-property all
-      //transition-duration .1s
-      //transition-timing-function linear
-      //transition-delay 0s
+      transition: transform 0.15s linear;
+      will-change transform
+      position absolute
+      z-index -1
 </style>

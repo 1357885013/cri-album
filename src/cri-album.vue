@@ -102,4 +102,5 @@ export default {
   grid-gap 0
   /*overflow hidden*/
   justify-content space-between
+  //transition 2s
 </style>
