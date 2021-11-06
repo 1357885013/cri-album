@@ -1,6 +1,6 @@
 {
   "name": "cri-album",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "CRI ALBUM",
   "main": "dist/cri-album.js",
   "types": "./cri-album.d.ts",

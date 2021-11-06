@@ -4,7 +4,9 @@
       <div class="img-wrapper" ref="image" @mouseenter="mouseEnter" @mouseleave="mouseLeave" @mousemove="mouseMove">
         <img :src="pic.src" :style="{width:styleImg.width,height:styleImg.height,transform:styleImg.transform}"
              class="img" alt="不支持的类型">
-        <slot :index="index" :item="pic"></slot>
+        <div class="img-slot">
+          <slot :index="index" :item="pic"></slot>
+        </div>
       </div>
     </div>
   </div>
@@ -216,5 +218,11 @@ padding = 4px
       transition: transform 0.15s linear;
       will-change transform
       position absolute
-      z-index -1
+
+    & > .img-slot
+      position absolute
+      right 0
+      left 0
+      bottom 0
+      top 0
 </style>
