@@ -1,8 +1,18 @@
 <template>
   <div :style="style">
     <div class="img-wrapper-out">
-      <div class="img-wrapper" ref="image" @mouseenter="mouseEnter" @mouseleave="mouseLeave" @mousemove="mouseMove">
-        <img :src="pic.src" :style="{width:styleImg.width,height:styleImg.height,transform:styleImg.transform}"
+      <div class="img-wrapper" ref="imageWrapper" @mouseenter="mouseEnter" @mouseleave="mouseLeave" @mousemove="mouseMove">
+        <div :style="{display:loading}" style="position: absolute;top: 0;left:0;z-index: 10;">
+          <div class="loadingio-spinner-dual-ring-mjzqrvbysi">
+            <div class="ldio-6qlrjbwah5c">
+              <div></div>
+              <div>
+                <div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <img :key="pic.src" :src="pic.src" ref="image" loading="lazy" :style="{width:styleImg.width,height:styleImg.height,transform:styleImg.transform}"
              class="img" alt="不支持的类型">
         <div class="img-slot">
           <slot :index="index" :item="pic"></slot>
@@ -43,7 +53,8 @@ export default {
       backgroundPosition: 'center',
       // is width big then height
       WBTH: null,
-      $img: null
+      $img: null,
+      loading: "none",
     }
   },
   watch: {
@@ -55,6 +66,10 @@ export default {
       console.log('src changed');
       this.styleImg.transform = null;
       this.getImgNaturalDimensions()
+      let that = this;
+      this.$refs.image.onload = function () {
+        that.getImgNaturalDimensions()
+      }
     },
     blockWidth: function (now, old) {
       this.computeSize();
@@ -96,22 +111,30 @@ export default {
         this.computeSize();
         hasSize = true;
       }
-      let oImg = this.$refs.image;
-      if (oImg.naturalWidth) { // 现代浏览器
-        this.oW = oImg.naturalWidth;
-        this.oH = oImg.naturalHeight;
-      } else { // IE6/7/8
-        let nImg = new Image();
-        let that = this;
-        nImg.onload = function () {
-          if (hasSize && that.oW === nImg.width && that.oH === nImg.height)
-            return;
-          that.oW = nImg.width;
-          that.oH = nImg.height;
-          that.computeSize();
-        };
-        nImg.src = this.pic.src;
-      }
+      this.loading = "block";
+      // 这一种的onload事件不管用. 切换src后 这个oImg是不会清空的还是前一个的东西,加了key也不行.
+      // let oImg = this.$refs.image;
+      // if (oImg.naturalWidth) { // 现代浏览器
+      //   if (hasSize && this.oW === oImg.width && this.oH === oImg.height)
+      //     return;
+      //   this.oW = oImg.naturalWidth;
+      //   this.oH = oImg.naturalHeight;
+      //   console.log("loading end!");
+      //   this.computeSize();
+      //   this.loading = "none";
+      // } else { // IE6/7/8
+      let nImg = new Image();
+      let that = this;
+      nImg.onload = function () {
+        if (hasSize && that.oW === nImg.width && that.oH === nImg.height)
+          return;
+        that.oW = nImg.width;
+        that.oH = nImg.height;
+        that.computeSize();
+        that.loading = "none";
+      };
+      nImg.src = this.pic.src;
+      // }
     },
     computeSize: function () {
       let that = this;
@@ -174,7 +197,7 @@ export default {
     },
     // 算出被遮盖的宽/高度
     computeCoverLength: function () {
-      let img = this.$refs.image;
+      let img = this.$refs.imageWrapper;
       this.width = img.clientWidth;
       this.height = img.clientHeight;
       if (this.oW / this.width > this.oH / this.height) {
@@ -225,4 +248,63 @@ padding = 4px
       left 0
       bottom 0
       top 0
+
+
+@keyframes ldio-6qlrjbwah5c {
+  0% { transform: rotate(0) }
+  100% { transform: rotate(360deg) }
+}
+.ldio-6qlrjbwah5c div { box-sizing: border-box!important }
+.ldio-6qlrjbwah5c > div {
+  position: absolute;
+  width: 72px;
+  height: 72px;
+  top: 14px;
+  left: 14px;
+  border-radius: 50%;
+  border: 8px solid #000;
+  border-color: #fe718d transparent #fe718d transparent;
+  animation: ldio-6qlrjbwah5c 1s linear infinite;
+}
+.ldio-6qlrjbwah5c > div:nth-child(2) { border-color: transparent }
+.ldio-6qlrjbwah5c > div:nth-child(2) div {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: rotate(45deg);
+}
+.ldio-6qlrjbwah5c > div:nth-child(2) div:before, .ldio-6qlrjbwah5c > div:nth-child(2) div:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  top: -8px;
+  left: 24px;
+  background: #fe718d;
+  border-radius: 50%;
+  box-shadow: 0 64px 0 0 #fe718d;
+}
+.ldio-6qlrjbwah5c > div:nth-child(2) div:after {
+  left: -8px;
+  top: 24px;
+  box-shadow: 64px 0 0 0 #fe718d;
+}
+.loadingio-spinner-dual-ring-8z8bzq6j683 {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  overflow: hidden;
+  background: none;
+}
+.ldio-6qlrjbwah5c {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(0.5);
+  backface-visibility: hidden;
+  transform-origin: 0 0; /* see note above */
+}
+.ldio-6qlrjbwah5c div { box-sizing: content-box; }
+/* generated by https://loading.io/ */
 </style>
