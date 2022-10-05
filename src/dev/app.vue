@@ -11,12 +11,16 @@
         </a-radio-button>
       </a-radio-group>
       <p class="title">图片<span>共21个</span></p>
-      <a-slider v-model="maxHeight" :min="1" :max="2000"/>
-      <cri-album v-if="which==='cri'" :pictures="pictures" :max-height="maxHeight">
+      max height<a-slider v-model="maxHeight" :min="1" :max="2000"/>
+      block size<a-slider v-model="blockSize" :min="1" :max="2000"/>
+      block aspect ratio<a-slider v-model="blockAspectRatio" :step=0.1 :min="0.1" :max="5"/>
+      <cri-album v-if="which==='cri'" :pictures="pictures" :max-height="maxHeight" :block-size="blockSize"
+                 :block-aspect-ratio="blockAspectRatio">
         <template v-slot="{item,index}"><span class="img-title">{{ item.name }}</span></template>
       </cri-album>
       <crimson-album v-else :pictures="pictures" :max-height="maxHeight"/>
       <a-slider v-model="maxHeight" :min="1" :max="2000"/>
+      <a-slider v-model="blockSize" :min="1" :max="2000"/>
     </div>
   </div>
 </template>
@@ -31,7 +35,9 @@ export default {
   data: function () {
     return {
       pictures: [],
-      maxHeight: 499,
+      maxHeight: 173,
+      blockSize: 212,
+      blockAspectRatio: 2,
       which: "cri"
     }
   },

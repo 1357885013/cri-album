@@ -26,6 +26,15 @@ export default {
       type: Array,
       default: []
     },
+    // to calculate the block width and block height;
+    blockSize: {
+      type: Number,
+      default: 212
+    },
+    blockAspectRatio: {
+      type: Number,
+      default: 2
+    },
     maxHeight: {
       type: Number,
       default: 499
@@ -34,16 +43,16 @@ export default {
   data: function () {
     return {
       width: 1,
-      gridSize: 38,
+      // gridSize: 38,
       testMockVal: "test",
       picData: {},
       gridStyle: {},
-      blockSize: 212,
       // private width
       PBlockWidth: 0,
       picturesIndex: {},
       blockWidth: 0,
       blockHeight: 0,
+      scrollWidth: 10
     }
   },
   components: {
@@ -51,22 +60,24 @@ export default {
   },
   watch: {
     width: function (newV, oldV) {
-      let result = Math.floor(this.width / Math.round(this.width / this.blockSize))
+      let result = Math.floor((this.width - this.scrollWidth) / Math.round((this.width - this.scrollWidth) / this.blockSize))
       this.blockWidth = result;
       console.log('block size:' + result)
       console.log('block size remain:' + this.width % result + '  grid size total remain: ')
-      this.blockHeight = Math.round(this.blockWidth * 0.8);
+      this.blockHeight = Math.round(this.blockWidth / this.blockAspectRatio);
     },
     blockSize: function (newV, oldV) {
-      let result = Math.floor(this.width / Math.round(this.width / this.blockSize))
+      let result = Math.floor((this.width - this.scrollWidth) / Math.round((this.width - this.scrollWidth) / this.blockSize))
       this.blockWidth = result;
       console.log('block size:' + result)
       console.log('block size remain:' + this.width % result + '  grid size total remain: ')
-      this.blockHeight = Math.round(this.blockWidth * 0.8);
+      this.blockHeight = Math.round(this.blockWidth / this.blockAspectRatio);
+    },
+    blockAspectRatio: function (newV, oldV) {
+      this.blockHeight = Math.round(this.blockWidth / this.blockAspectRatio);
     },
   },
-  computed: {
-  },
+  computed: {},
   mounted() {
     let that = this;
     window.onresize = () => {
