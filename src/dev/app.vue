@@ -13,7 +13,7 @@
       <p class="title">图片<span>共21个</span></p>
       max height<a-slider v-model="maxHeight" :min="1" :max="2000"/>
       block size<a-slider v-model="blockSize" :min="1" :max="2000"/>
-      block aspect ratio<a-slider v-model="blockAspectRatio" :step=0.1 :min="0.1" :max="5"/>
+      block aspect ratio<a-slider v-model="blockAspectRatio" :step=0.01 :min="0.1" :max="5"/>
       <cri-album v-if="which==='cri'" :pictures="pictures" :max-height="maxHeight" :block-size="blockSize"
                  :block-aspect-ratio="blockAspectRatio">
         <template v-slot="{item,index}"><span class="img-title">{{ item.name }}</span></template>

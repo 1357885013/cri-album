@@ -156,6 +156,29 @@ export default {
         // 让分子为1
         ratio = Math.round(rh / rw);
       }
+
+
+      let blockH, blockW;
+      ratio = origin.h / origin.w;
+      if (this.WBTH) {
+        blockH = Math.round(Math.min(this.maxHeight, origin.h) / this.blockHeight);
+        let w = blockH * this.blockHeight / ratio / this.blockWidth;
+        blockW = Math.round(w);
+      } else {
+        blockW = Math.round(Math.min(this.maxHeight, origin.h) / this.blockWidth);
+        let h = blockW * this.blockWidth * ratio / this.blockHeight;
+        blockH = Math.round(h);
+      }
+
+      this.height = that.blockHeight * blockH;
+      this.width = that.blockWidth * blockW;
+      that.style.gridColumn = "span " + parseInt(blockW);
+      that.style.gridRow = "span " + parseInt(blockH);
+      that.$nextTick(function () {
+        that.computeCoverLength();
+      })
+      return;
+
       // 通过放大让分母约等于整数
       let ds = [1, 2, 3, 4, 5]
       let minD = Number.MAX_VALUE;
