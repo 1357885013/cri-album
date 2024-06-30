@@ -2,37 +2,27 @@
 
 > 用于展示图片的相册组件, 可以根据图片的大小 宽高比例以及设置 动态计算图片的展示大小,高度托管的同时又高度可定义. 
 
-## Project setup
 
-```bash
-npm i -g pnpm
+## Project Setup
+
+```sh
 pnpm install
 ```
 
-### Compiles and hot-reloads for development
+### Compile and Hot-Reload for Development
 
-```bash
-pnpm run dev
+```sh
+pnpm dev
 ```
 
-### Compiles and minifies for production
+### Type-Check, Compile and Minify for Production
 
-```bash
-pnpm run build
+```sh
+pnpm build
 ```
 
-### Run your tests
+### Lint with [ESLint](https://eslint.org/)
 
-```bash
-pnpm run test
+```sh
+pnpm lint
 ```
-
-### Lints and fixes files
-
-```bash
-pnpm run lint
-```
-
-### Customize configuration
-
-See [Configuration Reference](https://cli.vuejs.org/config/).
