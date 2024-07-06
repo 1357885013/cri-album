@@ -21,29 +21,37 @@
     </div>
     <a-modal v-model:open="statistics.h.visible" @cancel="hideStatisticsH">
       <div>Good Good Good</div>
-      <div>--------------------</div>
-      <template :key="i" v-for=" (v,i) in store.allH">
-        <div style="display: flex;width: 100px;justify-content: space-between;line-height: 16px;">
-          <span>{{ i }}</span>
+      <div>--------隐藏--------</div>
+      <div style="display: grid;grid-template-columns:100px auto 50px;grid-auto-rows: auto;line-height: 15px;">
+        <template :key="i" v-for=" (v,i) in store.allH">
+          <span>{{ i }} %</span>
           <span>
             <template v-if="v">
             <template v-for="v1 in v">
-              .
+              *
             </template>
             </template>
           </span>
           <span>{{ v }} </span>
-        </div>
-      </template>
+        </template>
+      </div>
     </a-modal>
     <a-modal v-model:open="statistics.s.visible" @cancel="hideStatisticsS">
       <div>Bad Bad Bad</div>
-      <div>--------------------</div>
-      <template :key="i" v-for=" (v,i) in store.allS">
-        <div style="display: flex;width: 100px;justify-content: space-between;line-height: 16px;">
-          <span>{{ i }}</span><span>{{ v }}</span>
-        </div>
-      </template>
+      <div>--------缩放--------</div>
+      <div style="display: grid;grid-template-columns:100px auto 50px;grid-auto-rows: auto;line-height: 15px;">
+        <template :key="i" v-for=" (v,i) in store.allS">
+          <span>{{ i }} %</span>
+          <span>
+            <template v-if="v">
+            <template v-for="v1 in v">
+              *
+            </template>
+            </template>
+          </span>
+          <span>{{ v }} </span>
+        </template>
+      </div>
     </a-modal>
   </template>
   <div id="app">

@@ -42,7 +42,7 @@ export const useImgStore = defineStore('img', () => {
     function pushScale(k: string, v: number) {
         console.log('pushScale', k, v)
         // 检测v是不是数字
-        if (isNaN(v)) {
+        if (isNaN(v) || v === Infinity) {
             return;
         }
         let old = scale.value[k]
@@ -56,7 +56,7 @@ export const useImgStore = defineStore('img', () => {
             s.value.total += v;
             s.value.count += 1;
             s.value.avg = (s.value.total / s.value.count);
-            if(isNaN(s.value.avg)){
+            if (isNaN(s.value.avg)) {
                 debugger
             }
         } else {
@@ -66,7 +66,7 @@ export const useImgStore = defineStore('img', () => {
             // 算平均数
             s.value.total = s.value.total - old + v;
             s.value.avg = (s.value.total / s.value.count);
-            if(isNaN(s.value.avg)){
+            if (isNaN(s.value.avg)) {
                 debugger
             }
             scale.value[k] = v;
