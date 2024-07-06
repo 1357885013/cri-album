@@ -1,15 +1,56 @@
 <template>
+  <a-form layout="inline">
+    <a-form-item label="最大高度">
+      <a-input-number v-model:value="maxHeight" :min="20" :max="2000" :step="20"/>
+    </a-form-item>
+    <a-form-item label="Grid的列数量">
+      <a-input-number v-model:value="columnCount" :min="1" :max="20"/>
+    </a-form-item>
+    <a-form-item label="小格子的宽高比">
+      <a-input-number v-model:value="blockAspectRatio" :step="0.1" :min="0.1" :max="5"/>
+    </a-form-item>
+    <a-form-item>
+      <a-button @click="changeUrl">随机交换两张图片</a-button>
+    </a-form-item>
+  </a-form>
+  <template v-if="store.h?.count">
+    <div style="display: flex; justify-content: flex-start;gap: 35px;">
+      <p>图片总数: {{ store.h.count }}</p>
+      <p @click="showStatisticsH">平均隐藏百分比: {{ store.h.avg }}</p>
+      <p @click="showStatisticsS">平均缩放百分比: {{ store.s.avg }}</p>
+    </div>
+    <a-modal v-model:open="statistics.h.visible" @cancel="hideStatisticsH">
+      <div>Good Good Good</div>
+      <div>--------------------</div>
+      <template :key="i" v-for=" (v,i) in store.allH">
+        <div style="display: flex;width: 100px;justify-content: space-between;line-height: 16px;">
+          <span>{{ i }}</span>
+          <span>
+            <template v-if="v">
+            <template v-for="v1 in v">
+              .
+            </template>
+            </template>
+          </span>
+          <span>{{ v }} </span>
+        </div>
+      </template>
+    </a-modal>
+    <a-modal v-model:open="statistics.s.visible" @cancel="hideStatisticsS">
+      <div>Bad Bad Bad</div>
+      <div>--------------------</div>
+      <template :key="i" v-for=" (v,i) in store.allS">
+        <div style="display: flex;width: 100px;justify-content: space-between;line-height: 16px;">
+          <span>{{ i }}</span><span>{{ v }}</span>
+        </div>
+      </template>
+    </a-modal>
+  </template>
   <div id="app">
     <div>
-      <button @click="changeUrl">Change URL</button>
-      <p class="title">图片<span>共{{ pictures.length }}个</span></p>
-      Max height:
-      <a-slider v-model:value="maxHeight" :min="1" :max="2000"/>
-      Block size:
-      <a-slider v-model:value="blockSize" :min="1" :max="2000"/>
-      Block aspect ratio:
-      <a-slider v-model:value="blockAspectRatio" :step="0.01" :min="0.1" :max="5"/>
-      <Grid :pictures="pictures" :max-height="maxHeight" :block-size="blockSize"
+      <!--      <p class="title">图片<span>共{{ pictures.length }}个</span></p>-->
+
+      <Grid :pictures="pictures" :max-height="maxHeight" :column-count="columnCount"
             :block-aspect-ratio="blockAspectRatio">
         <template #default="{ item, index }">
           <div class="title-slot">
@@ -22,9 +63,12 @@
 </template>
 
 <script setup lang="ts">
-import {ref, onBeforeUnmount, onMounted} from 'vue';
+import {ref, onBeforeUnmount, onMounted, watch} from 'vue';
 import Grid from "@/components/Grid.vue";
 import type {Picture} from '@/types';
+import {useImgStore} from "@/stores/imgStore";
+
+const store = useImgStore();
 
 const pictures = ref<Array<Picture>>([]);
 
@@ -105,14 +149,23 @@ const files = [
 ]
 
 const maxHeight = ref(327);
-const blockSize = ref(382);
+const columnCount = ref(4);
 const blockAspectRatio = ref(1.5);
 
 // Watchers and lifecycle hooks
 onMounted(() => {
+  localStorage.getItem('maxHeight') && (maxHeight.value = parseInt(localStorage.getItem('maxHeight')!));
+  localStorage.getItem('columnCount') && (columnCount.value = parseInt(localStorage.getItem('columnCount')!));
+  localStorage.getItem('blockAspectRatio') && (blockAspectRatio.value = parseFloat(localStorage.getItem('blockAspectRatio')!));
   for (let file of files) {
     pictures.value.push({src: `img/${file}`, name: file})
   }
+});
+
+watch([maxHeight, columnCount, blockAspectRatio], () => {
+  localStorage.setItem('maxHeight', maxHeight.value.toString());
+  localStorage.setItem('columnCount', columnCount.value.toString());
+  localStorage.setItem('blockAspectRatio', blockAspectRatio.value.toString());
 });
 
 onBeforeUnmount(() => {
@@ -125,11 +178,29 @@ function changeUrl() {
   do {
     r = Math.floor(Math.random() * pictures.value.length);
   } while (l === r);
-  [pictures.value[l], pictures.value[r]] = [pictures.value[r], pictures.value[l]];
+  [pictures.value[l].src, pictures.value[r].src] = [pictures.value[r].src, pictures.value[l].src];
   console.log(`Swapped indices ${l} and ${r}`);
 }
-</script>
 
+const statistics = ref({h: {visible: false}, s: {visible: false}});
+
+function showStatisticsH() {
+  statistics.value.h.visible = true;
+}
+
+function showStatisticsS() {
+  statistics.value.s.visible = true;
+}
+
+function hideStatisticsH() {
+  statistics.value.h.visible = false;
+}
+
+function hideStatisticsS() {
+  statistics.value.s.visible = false;
+}
+
+</script>
 
 <style scoped>
 .title {
