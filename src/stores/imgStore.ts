@@ -40,7 +40,7 @@ export const useImgStore = defineStore('img', () => {
     }
 
     function pushScale(k: string, v: number) {
-        console.log('pushScale', k, v)
+        // console.log('pushScale', k, v)
         // 检测v是不是数字
         if (isNaN(v) || v === Infinity) {
             return;

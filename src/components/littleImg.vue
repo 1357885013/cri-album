@@ -25,7 +25,7 @@
 <script setup lang="ts">
 import {ref, reactive, watch, onMounted, nextTick, defineProps, toRefs} from 'vue';
 import type {Picture} from "@/types";
-import {useImgStore} from "@/stores/img";
+import {useImgStore} from "@/stores/imgStore";
 
 const props = defineProps({
   pic: {
@@ -36,6 +36,7 @@ const props = defineProps({
   index: Number,
   blockWidth: Number,
   blockHeight: Number,
+  columnCount: Number,
   maxHeight: Number,
 });
 const store = useImgStore();
@@ -148,6 +149,8 @@ function computeSize() {
     blockW = Math.round(w);
   } else {
     blockW = Math.round(Math.min(maxHeight?.value, origin.h) / blockWidth.value);
+    // if (props.columnCount)
+    //   blockW = Math.min(props.columnCount, blockW)
     let h = blockW * blockWidth.value * ratio / blockHeight.value;
     blockH = Math.round(h);
   }
@@ -161,6 +164,7 @@ function computeSize() {
   });
   return;
 
+  debugger
   // 通过放大让分母约等于整数
   let ds = [1, 2, 3, 4, 5]
   let minD = Number.MAX_VALUE;
@@ -234,8 +238,8 @@ function computeCoverLength() {
     hiddenPercent.value = Math.round(coverLength.value * 2 / (height.value + coverLength.value * 2) * 100);
   }
   store.pushScale(props.pic.name, scalePercent.value);
-  // if(hiddenPercent.value==100)
-  //   debugger
+  if (hiddenPercent.value == 100)
+    console.error('图片没显示出来')
   store.pushHidden(props.pic.name, hiddenPercent.value);
 }
 </script>

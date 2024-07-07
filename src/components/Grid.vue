@@ -1,7 +1,9 @@
 <template>
   <div class="home">
     <div class="images" @resize="resize" ref="images"
-         :style="{ 'grid-auto-rows': `${blockHeight}px`, 'grid-template-columns': `repeat(auto-fill, ${blockWidth}px)` }">
+         :style="{ 'grid-auto-rows': `${blockHeight}px`, 'grid-template-columns': `repeat(${props.columnCount}, ${blockWidth}px)` }">
+      <!--            :style="{ 'grid-auto-rows': `${blockHeight}px`, 'grid-auto-columns': `${blockWidth}px` }">-->
+      <!--      这里要根据可视区域的宽度自动设置有几列，同时要根据block size 近似计算出每个block的宽度，把block size选项直接改为列数-->
       <littleImg
           v-for="(pic, index) in pictures"
           :key="index"
@@ -9,6 +11,7 @@
           :index="index"
           :blockHeight="blockHeight"
           :blockWidth="blockWidth"
+          :columnCount="props.columnCount"
           :maxHeight="maxHeight">
         <template v-slot="prop">
           <slot :index="prop.index" :item="prop.item"></slot>
@@ -28,7 +31,7 @@ const props = defineProps({
     type: Array as () => Picture[],
     default: () => []
   },
-  blockSize: {
+  columnCount: {
     type: Number,
     default: 212
   },
@@ -52,14 +55,15 @@ watch(() => width.value, () => {
   calculateBlockWidth();
 });
 
-watch(() => props.blockSize, () => {
+watch(() => props.columnCount, () => {
   calculateBlockWidth();
 });
 
 // Function to calculate block width based on container width
 function calculateBlockWidth() {
   if (!images.value) return;
-  let result = Math.floor((width.value - 10) / Math.round((width.value - 10) / props.blockSize));
+  // let result = Math.floor((width.value - 10) / Math.round((width.value - 10) / props.columnCount));
+  let result = Math.floor((width.value - 10) / props.columnCount);
   blockWidth.value = result;
   console.log(`Block size: ${result}`);
   console.log(`Block size remainder: ${width.value % result}  grid size total remainder: `);
@@ -97,7 +101,8 @@ function resize(e: Event) {
 <style lang="css" scoped>
 .images {
   display: grid;
-  grid-auto-flow: row dense;
+ /* grid-auto-flow: row dense;  */
+  grid-auto-flow: row;
   grid-gap: 0;
   gap: 0;
   justify-content: center;
