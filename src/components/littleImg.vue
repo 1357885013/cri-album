@@ -127,43 +127,31 @@ function updateDimensions(naturalWidth: number, naturalHeight: number) {
 
 function findNearRadio(array: any[], currentIndex: number): number {
   const length = array.length;
-
-  let toLeft = true;
   let distance = 1;
-  let leftEnd = false, rightEnd = false;
-  do {
-    if (toLeft) {
-      if (currentIndex - distance < 0) {
-        toLeft = false;
-        leftEnd = true;
-      } else {
-        if (checkRadio(props.radio?.map[currentIndex - distance])) {
-          return currentIndex - distance;
-        } else {
-          if (!rightEnd)
-            toLeft = false;
-        }
-      }
-    } else {
-      if (currentIndex + distance >= length) {
-        rightEnd = true;
-        toLeft = true;
-        distance++;
-      } else {
-        if (checkRadio(props.radio?.map[currentIndex - distance])) {
-          return currentIndex + distance;
-        } else {
-          if (!leftEnd) {
-            toLeft = true;
-            distance++;
-          } else {
-            distance++;
-          }
-        }
+
+  while (true) {
+    // 向左搜索
+    for (let i = 1; currentIndex - i >= 0; i++) {
+      if (checkRadio(props.radio?.map[currentIndex - i])) {
+        return currentIndex - i;
       }
     }
-  } while (!leftEnd || !rightEnd)
-  return -1;
+
+    // 向右搜索
+    for (let i = 1; currentIndex + i < length; i++) {
+      if (checkRadio(props.radio?.map[currentIndex + i])) {
+        return currentIndex + i;
+      }
+    }
+
+    // 如果左右都没有找到合适的索引，增加搜索距离
+    distance++;
+
+    // 如果超出数组边界，返回 -1
+    if (currentIndex - distance < 0 && currentIndex + distance >= length) {
+      return -1;
+    }
+  }
 }
 
 function checkRadio(wh: [number, number] | undefined) {
