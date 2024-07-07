@@ -23,9 +23,10 @@
 </template>
 
 <script setup lang="ts">
-import {ref, reactive, watch, onMounted, nextTick, defineProps, toRefs} from 'vue';
-import type {Picture} from "@/types";
+import {ref, reactive, watch, onMounted, nextTick, defineProps, toRefs, computed} from 'vue';
+import type {Picture, RadioState} from "@/types";
 import {useImgStore} from "@/stores/imgStore";
+import {binarySearch} from "@/lib/binarySearch";
 
 const props = defineProps({
   pic: {
@@ -38,6 +39,7 @@ const props = defineProps({
   blockHeight: Number,
   columnCount: Number,
   maxHeight: Number,
+  radio: Object as () => RadioState
 });
 const store = useImgStore();
 
@@ -51,6 +53,8 @@ const WBTH = ref(true);
 const hiddenPercent = ref(0); // 图片被隐藏了百分之多少
 const scalePercent = ref(0); // 图片被缩放了百分之多少
 const coverLength = ref(null);
+const maxCountOfShortEdgeH = computed(() => Math.floor((maxHeight.value / blockHeight.value)));
+const maxCountOfShortEdgeW = computed(() => Math.floor((maxHeight.value / blockWidth.value)));
 const style = reactive({
   gridRow: "span 1",
   gridColumn: "span 1"
@@ -121,92 +125,101 @@ function updateDimensions(naturalWidth: number, naturalHeight: number) {
   computeSize();
 }
 
+function findNearRadio(array: any[], currentIndex: number): number {
+  const length = array.length;
+
+  let toLeft = true;
+  let distance = 1;
+  let leftEnd = false, rightEnd = false;
+  do {
+    if (toLeft) {
+      if (currentIndex - distance < 0) {
+        toLeft = false;
+        leftEnd = true;
+      } else {
+        if (checkRadio(props.radio?.map[currentIndex - distance])) {
+          return currentIndex - distance;
+        } else {
+          if (!rightEnd)
+            toLeft = false;
+        }
+      }
+    } else {
+      if (currentIndex + distance >= length) {
+        rightEnd = true;
+        toLeft = true;
+        distance++;
+      } else {
+        if (checkRadio(props.radio?.map[currentIndex - distance])) {
+          return currentIndex + distance;
+        } else {
+          if (!leftEnd) {
+            toLeft = true;
+            distance++;
+          } else {
+            distance++;
+          }
+        }
+      }
+    }
+  } while (!leftEnd || !rightEnd)
+  return -1;
+}
+
+function checkRadio(wh: [number, number] | undefined) {
+  if (!wh) return false;
+  if (wh[0] > props.columnCount) {
+    return false
+  }
+  if (WBTH.value) {
+    if (wh[1] > maxCountOfShortEdgeH.value) {
+      return false
+    }
+  } else {
+    if (wh[0] > maxCountOfShortEdgeW.value) {
+      return false
+    }
+  }
+  return true
+}
+
 function computeSize() {
   if (oW.value === 0) return;
   let origin = {w: oW.value, h: oH.value}
-  let realRate = origin.w / origin.h;
-  let rw = (origin.w / blockWidth.value);
-  let rh = (origin.h / blockHeight.value);
-  let ratio;
-  if (rw >= rh) {
-    // 宽图片
-    WBTH.value = true;
-    // 让分子为1
-    ratio = Math.round(rw / rh);
+  WBTH.value = origin.w > origin.h; // 宽比高大
+  let imageRadio = origin.w / origin.h;
+  if (!props.radio?.list.length) {
+    console.error('radio.list is empty')
+    return;
+  }
+  let index = binarySearch(props.radio?.list, imageRadio)
+  let wh = [1, 1];
+  if (index === -1) {
+    console.error('can not find radio' + imageRadio)
   } else {
-    // 高图片
-    WBTH.value = false;
-    // 让分子为1
-    ratio = Math.round(rh / rw);
+    wh = props.radio?.map[props.radio?.list[index]];
+    if (!checkRadio(wh)) {
+      index = findNearRadio(props.radio?.list, index)
+      if (index === -1) {
+        console.error('can not find near radio' + imageRadio)
+      } else {
+        wh = props.radio?.map[props.radio?.list[index]];
+      }
+    }
   }
 
+  let blockCountOfW = wh[0]
+  let blockCountOfH = wh[1]
 
-  let blockH, blockW;
-  ratio = origin.h / origin.w;
-  if (WBTH.value) {
-    blockH = Math.round(Math.min(maxHeight?.value, origin.h) / blockHeight.value);
-    let w = blockH * blockHeight.value / ratio / blockWidth.value;
-    blockW = Math.round(w);
-  } else {
-    blockW = Math.round(Math.min(maxHeight?.value, origin.h) / blockWidth.value);
-    // if (props.columnCount)
-    //   blockW = Math.min(props.columnCount, blockW)
-    let h = blockW * blockWidth.value * ratio / blockHeight.value;
-    blockH = Math.round(h);
-  }
-
-  height.value = blockHeight.value * blockH;
-  width.value = blockWidth.value * blockW;
-  style.gridColumn = "span " + parseInt(blockW);
-  style.gridRow = "span " + parseInt(blockH);
+  WBTH.value = wh[0] > wh[1]; // 宽比高大
+  height.value = blockHeight.value * blockCountOfH;
+  width.value = blockWidth.value * blockCountOfW;
+  style.gridColumn = "span " + blockCountOfW;
+  style.gridRow = "span " + blockCountOfH;
   nextTick(() => {
     computeCoverLength();
   });
   return;
-
-  debugger
-  // 通过放大让分母约等于整数
-  let ds = [1, 2, 3, 4, 5]
-  let minD = Number.MAX_VALUE;
-  let min = Number.MAX_VALUE;
-  for (let i = 0; i < ds.length; i++) {
-    let temp = ratio * ds[i];
-    temp = Math.abs(Math.round(temp) - temp);
-    if (temp < min) {
-      min = temp;
-      minD = ds[i];
-    }
-  }
-  ratio = Math.round(ratio * minD);
-  let nowRateO;
-  // 算出宽高比例
-  if (WBTH.value) {
-    nowRateO = {rate: ratio / minD, x: ratio, y: minD};
-  } else {
-    nowRateO = {rate: minD / ratio, x: minD, y: ratio}
-  }
-  // 算出 显示高度 , !!!!!!!!! grid 会自适应宽高
-  height.value = blockHeight.value * nowRateO.y;
-  width.value = blockWidth.value * nowRateO.x;
-  // 放大
-  let rate = !WBTH.value ? width.value / origin.w : height.value / origin.h;
-  while (rate < 0.4 && rate !== 0) {
-    if (WBTH.value) {
-      if (height.value > maxHeight.value)
-        break;
-    } else {
-      if (width.value > maxHeight.value)
-        break;
-    }
-    height.value *= 2;
-    width.value *= 2;
-    rate *= 2;
-  }
-  style.gridColumn = "span " + parseInt(width.value / blockWidth.value);
-  style.gridRow = "span " + parseInt(height.value / blockHeight.value);
-  nextTick(() => {
-    computeCoverLength();
-  });
 }
 
 function computeCoverLength() {

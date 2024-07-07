@@ -11,6 +11,7 @@
           :index="index"
           :blockHeight="blockHeight"
           :blockWidth="blockWidth"
+          :radio = "radio"
           :columnCount="props.columnCount"
           :maxHeight="maxHeight">
         <template v-slot="prop">
@@ -24,7 +25,7 @@
 <script setup lang="ts">
 import {ref, watch, onMounted, computed, onUnmounted} from 'vue';
 import littleImg from '../components/littleImg.vue';
-import type {Picture} from "@/types";
+import type {Picture, RadioState} from "@/types";
 
 const props = defineProps({
   pictures: {
@@ -59,6 +60,9 @@ watch(() => props.columnCount, () => {
   calculateBlockWidth();
 });
 
+const radio = ref<RadioState>({list: [], map: {}})
+const maxBlockCountPerImage = props.columnCount;
+
 // Function to calculate block width based on container width
 function calculateBlockWidth() {
   if (!images.value) return;
@@ -67,6 +71,24 @@ function calculateBlockWidth() {
   blockWidth.value = result;
   console.log(`Block size: ${result}`);
   console.log(`Block size remainder: ${width.value % result}  grid size total remainder: `);
+  // 计算所有可能的block的宽高比
+  radio.value.list = [];
+  radio.value.map = {};
+  const blockRadio = (blockWidth.value / blockHeight.value);
+  for (let w = 1; w <= maxBlockCountPerImage; w++) {
+    for (let h = 1; h <= maxBlockCountPerImage; h++) {
+      let vector: [number, number] = [w, h]
+      let blocksRadio = blockRadio * w / h
+      radio.value.list.push(blocksRadio)
+      radio.value.map[blocksRadio] = vector;
+    }
+  }
+
+  // 给radio.value.list升序排序
+  radio.value.list.sort((a, b) => {
+    // 如果b大于a就交换，那么就用b-a,因为返回值大于0就交换
+    return a - b
+  })
 }
 
 onMounted(() => {
@@ -101,7 +123,7 @@ function resize(e: Event) {
 <style lang="css" scoped>
 .images {
   display: grid;
- /* grid-auto-flow: row dense;  */
+  /* grid-auto-flow: row dense;  */
   grid-auto-flow: row;
   grid-gap: 0;
   gap: 0;

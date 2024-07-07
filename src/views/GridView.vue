@@ -11,6 +11,7 @@
     </a-form-item>
     <a-form-item>
       <a-button @click="changeUrl">随机交换两张图片</a-button>
+      <a-button @click="testBinarySearch()">测试折半查找</a-button>
     </a-form-item>
   </a-form>
   <template v-if="store.h?.count">
@@ -75,6 +76,7 @@ import {ref, onBeforeUnmount, onMounted, watch} from 'vue';
 import Grid from "@/components/Grid.vue";
 import type {Picture} from '@/types';
 import {useImgStore} from "@/stores/imgStore";
+import {testBinarySearch} from "@/lib/testBinarySearch";
 
 const store = useImgStore();
 

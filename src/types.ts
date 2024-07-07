@@ -12,3 +12,13 @@ export interface Picture {
     aspectRatio?: number;
     row?: number;
 }
+
+export interface RadioItem {
+    blocksRadio: number;
+    vector: [number, number];
+}
+
+export interface RadioState {
+    list: number[];
+    map: Record<number, [number, number]>;
+}
