@@ -53,8 +53,8 @@ const WBTH = ref(true);
 const hiddenPercent = ref(0); // 图片被隐藏了百分之多少
 const scalePercent = ref(0); // 图片被缩放了百分之多少
 const coverLength = ref(null);
-const maxCountOfShortEdgeH = computed(() => Math.floor((maxHeight.value / blockHeight.value)));
-const maxCountOfShortEdgeW = computed(() => Math.floor((maxHeight.value / blockWidth.value)));
+const maxCountOfShortEdgeH = computed(() => Math.max(Math.floor((maxHeight.value / blockHeight.value)), 1));
+const maxCountOfShortEdgeW = computed(() => Math.max(Math.floor((maxHeight.value / blockWidth.value)), 1));
 const style = reactive({
   gridRow: "span 1",
   gridColumn: "span 1"
@@ -190,6 +190,7 @@ function computeSize() {
       index = findNearRadio(props.radio?.list, index)
       if (index === -1) {
         console.error('can not find near radio' + imageRadio)
+        wh = [1, 1];
       } else {
         wh = props.radio?.map[props.radio?.list[index]];
       }
