@@ -125,22 +125,24 @@ function updateDimensions(naturalWidth: number, naturalHeight: number) {
   computeSize();
 }
 
-function findNearRadio(array: any[], currentIndex: number): number {
+function findNearRadio(array: any[], currentIndex: number): [number, number] | null {
   const length = array.length;
   let distance = 1;
 
   while (true) {
     // 向左搜索
     for (let i = 1; currentIndex - i >= 0; i++) {
-      if (checkRadio(props.radio?.map[currentIndex - i])) {
-        return currentIndex - i;
+      let r = (checkRadio(props.radio?.map[array[currentIndex - i]]))
+      if (r !== null) {
+        return r;
       }
     }
 
     // 向右搜索
     for (let i = 1; currentIndex + i < length; i++) {
-      if (checkRadio(props.radio?.map[currentIndex + i])) {
-        return currentIndex + i;
+      let r = (checkRadio(props.radio?.map[array[currentIndex + i]]))
+      if (r !== null) {
+        return r;
       }
     }
 
@@ -149,30 +151,37 @@ function findNearRadio(array: any[], currentIndex: number): number {
 
     // 如果超出数组边界，返回 -1
     if (currentIndex - distance < 0 && currentIndex + distance >= length) {
-      return -1;
+      return null;
     }
   }
 }
 
-function checkRadio(wh: [number, number] | undefined) {
-  if (!wh) return false;
-  if (wh[0] > props.columnCount) {
-    return false
-  }
-  if (WBTH.value) {
-    if (wh[1] > maxCountOfShortEdgeH.value) {
-      return false
+// 检查是否有合适的radio, 返回null表示没有， 否则返回合适的radio
+function checkRadio(whs: [number, number][] | undefined): [number, number] | null {
+  if (!whs) return null;
+  for (let wh of whs) {
+    if (wh[0] > props.columnCount) {
+      continue
     }
-  } else {
-    if (wh[0] > maxCountOfShortEdgeW.value) {
-      return false
+    if (WBTH.value) {
+      if (wh[1] > maxCountOfShortEdgeH.value) {
+        continue
+      }
+    } else {
+      if (wh[0] > maxCountOfShortEdgeW.value) {
+        continue
+      }
     }
+    return wh
   }
-  return true
+  return null
 }
 
 function computeSize() {
   if (oW.value === 0) return;
+  // if(props.pic.name==='1350413J8-2.jpg'){
+  //   debugger
+  // }
   let origin = {w: oW.value, h: oH.value}
   WBTH.value = origin.w > origin.h; // 宽比高大
   let imageRadio = origin.w / origin.h;
@@ -181,21 +190,23 @@ function computeSize() {
     return;
   }
   let index = binarySearch(props.radio?.list, imageRadio)
-  let wh = [1, 1];
+  // let wh = [[1, 1]] as [number, number][];
+  let wh = null as [number, number] | null;
   if (index === -1) {
     console.error('can not find radio' + imageRadio)
   } else {
-    wh = props.radio?.map[props.radio?.list[index]];
-    if (!checkRadio(wh)) {
-      index = findNearRadio(props.radio?.list, index)
-      if (index === -1) {
+    wh = checkRadio(props.radio?.map[props.radio?.list[index]]);
+    if (wh === null) {
+      wh = findNearRadio(props.radio?.list, index)
+      if (wh === null) {
         console.error('can not find near radio' + imageRadio)
         wh = [1, 1];
-      } else {
-        wh = props.radio?.map[props.radio?.list[index]];
       }
     }
   }
+
+  if (wh === null)
+    wh = [1, 1];
 
   let blockCountOfW = wh[0]
   let blockCountOfH = wh[1]

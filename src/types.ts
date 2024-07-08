@@ -20,5 +20,5 @@ export interface RadioItem {
 
 export interface RadioState {
     list: number[];
-    map: Record<number, [number, number]>;
+    map: Record<number, [number, number][]>;
 }

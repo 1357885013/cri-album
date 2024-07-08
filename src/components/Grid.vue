@@ -80,7 +80,12 @@ function calculateBlockWidth() {
       let vector: [number, number] = [w, h]
       let blocksRadio = blockRadio * w / h
       radio.value.list.push(blocksRadio)
-      radio.value.map[blocksRadio] = vector;
+      let l = radio.value.map[blocksRadio];
+      if(l){
+        l.push(vector)
+      }else{
+        radio.value.map[blocksRadio] = [vector]
+      }
     }
   }
 
