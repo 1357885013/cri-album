@@ -291,11 +291,11 @@ function computeCoverLength() {
 
 .img-wrapper-out > .img-wrapper {
   position: absolute;
-  right: 4px;
-  left: 4px;
-  bottom: 4px;
-  top: 4px;
-  border-radius: 5px;
+  right: 1px;
+  left: 1px;
+  bottom: 1px;
+  top: 1px;
+  border-radius: 2px;
   /*  box-shadow: 0 6px 13px rgba(0, 0, 0, 0.25), 0 5px 5px rgba(0, 0, 0, 0.22); */
   overflow: hidden;
 }

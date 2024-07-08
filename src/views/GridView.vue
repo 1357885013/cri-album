@@ -4,7 +4,7 @@
       <a-input-number v-model:value="maxHeight" :min="20" :max="2000" :step="20"/>
     </a-form-item>
     <a-form-item label="Grid的列数量">
-      <a-input-number v-model:value="columnCount" :min="1" :max="20"/>
+      <a-input-number v-model:value="columnCount" :min="1" :max="30"/>
     </a-form-item>
     <a-form-item label="小格子的宽高比">
       <a-input-number v-model:value="blockAspectRatio" :step="0.1" :min="0.1" :max="5"/>
@@ -160,8 +160,8 @@ const files = [
   '照片j-0071.jpg',
 ]
 
-const maxHeight = ref(327);
-const columnCount = ref(4);
+const maxHeight = ref(520);
+const columnCount = ref(5);
 const blockAspectRatio = ref(1.5);
 const showDebugInfo = ref(false);
 
