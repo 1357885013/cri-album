@@ -12,10 +12,34 @@
         <div class="img-slot">
           <slot :index="index" :item="pic"></slot>
         </div>
-        <div class="img-slot">
-          <span class="debug">{{ WBTH ? '--' : '|' }}</span>
-          <span class="debug">{{ hiddenPercent }}%</span>
-          <span class="debug">{{ scalePercent }}%</span>
+        <div v-if="showDebugInfo" class="img-slot">
+          <div>
+            <span class="debug" title="index">{{ index }}</span>
+            <span class="debug" title="表示图片是宽的还是高的">{{ WBTH ? '--' : '|' }}</span>
+            <span class="debug" title="隐藏率">{{ hiddenPercent }}%</span>
+            <span class="debug" title="缩放率">{{ scalePercent }}%</span>
+          </div>
+          <div>
+            <span class="debug" title="原始宽高">{{ oW }} * {{ oH }}</span>
+          </div>
+          <div>
+            <span class="debug" title="显示的宽高">{{ width?.toFixed(0) }} * {{ height?.toFixed(0) }}</span>
+          </div>
+          <div>
+            <span class="debug" title="grid的column数">{{ style.gridColumn }}</span>
+            <span class="debug" title="grid的row数">{{ style.gridRow }}</span>
+          </div>
+          <div>
+            <span class="debug" title="被隐藏的长度">{{ coverLength?.toFixed(0) }}px</span>
+            <span class="debug">{{ styleImg.transform }}</span>
+          </div>
+          <!--          <div>-->
+          <!--            <span class="debug">{{ styleImg.width }}</span>-->
+          <!--            <span class="debug">{{ styleImg.height }}</span>-->
+          <!--          </div>-->
+          <div>
+            <span class="debug" title="图片名字">{{ props.pic.name }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -39,7 +63,8 @@ const props = defineProps({
   blockHeight: Number,
   columnCount: Number,
   maxHeight: Number,
-  radio: Object as () => RadioState
+  radio: Object as () => RadioState,
+  showDebugInfo: Boolean
 });
 const store = useImgStore();
 
@@ -310,14 +335,15 @@ function computeCoverLength() {
 
 .debug {
   color: red;
-  font-size: 20px;
+  font-size: 15px;
   font-weight: bold;
   font-family: "Microsoft Tai Le";
   font-style: normal;
-  line-height: 28px;
+  line-height: 32px;
   letter-spacing: 2px;
   background: rgba(255, 255, 255, 0.5);
-  padding: 5px;
+  margin: 3px;
+  padding: 3px 6px;
   border-radius: 5px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }

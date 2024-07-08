@@ -7,11 +7,12 @@
       <littleImg
           v-for="(pic, index) in pictures"
           :key="index"
+          :showDebugInfo="props.showDebugInfo"
           :pic="pic"
           :index="index"
           :blockHeight="blockHeight"
           :blockWidth="blockWidth"
-          :radio = "radio"
+          :radio="radio"
           :columnCount="props.columnCount"
           :maxHeight="maxHeight">
         <template v-slot="prop">
@@ -43,6 +44,10 @@ const props = defineProps({
   maxHeight: {
     type: Number,
     default: 499
+  },
+  showDebugInfo: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -81,9 +86,9 @@ function calculateBlockWidth() {
       let blocksRadio = blockRadio * w / h
       radio.value.list.push(blocksRadio)
       let l = radio.value.map[blocksRadio];
-      if(l){
+      if (l) {
         l.push(vector)
-      }else{
+      } else {
         radio.value.map[blocksRadio] = [vector]
       }
     }
@@ -128,8 +133,7 @@ function resize(e: Event) {
 <style lang="css" scoped>
 .images {
   display: grid;
-  /* grid-auto-flow: row dense;  */
-  grid-auto-flow: row;
+  grid-auto-flow: row dense;
   grid-gap: 0;
   gap: 0;
   justify-content: center;

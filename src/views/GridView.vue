@@ -11,7 +11,8 @@
     </a-form-item>
     <a-form-item>
       <a-button @click="changeUrl">随机交换两张图片</a-button>
-      <a-button @click="testBinarySearch()">测试折半查找</a-button>
+      <a-button @click="showDebugInfo = !showDebugInfo">显示调试信息</a-button>
+      <!--      <a-button @click="testBinarySearch()">测试折半查找</a-button>-->
     </a-form-item>
   </a-form>
   <template v-if="store.h?.count">
@@ -60,10 +61,11 @@
       <!--      <p class="title">图片<span>共{{ pictures.length }}个</span></p>-->
 
       <Grid :pictures="pictures" :max-height="maxHeight" :column-count="columnCount"
+            :showDebugInfo="showDebugInfo"
             :block-aspect-ratio="blockAspectRatio">
         <template #default="{ item, index }">
           <div class="title-slot">
-            <span class="img-title">{{ item.name }}</span>
+<!--            <span class="img-title">{{ item.name }}</span>-->
           </div>
         </template>
       </Grid>
@@ -161,21 +163,24 @@ const files = [
 const maxHeight = ref(327);
 const columnCount = ref(4);
 const blockAspectRatio = ref(1.5);
+const showDebugInfo = ref(false);
 
 // Watchers and lifecycle hooks
 onMounted(() => {
   localStorage.getItem('maxHeight') && (maxHeight.value = parseInt(localStorage.getItem('maxHeight')!));
   localStorage.getItem('columnCount') && (columnCount.value = parseInt(localStorage.getItem('columnCount')!));
   localStorage.getItem('blockAspectRatio') && (blockAspectRatio.value = parseFloat(localStorage.getItem('blockAspectRatio')!));
+  localStorage.getItem('showDebugInfo') && (showDebugInfo.value = localStorage.getItem('showDebugInfo') === 'true');
   for (let file of files) {
     pictures.value.push({src: `img/${file}`, name: file})
   }
 });
 
-watch([maxHeight, columnCount, blockAspectRatio], () => {
+watch([maxHeight, columnCount, blockAspectRatio, showDebugInfo], () => {
   localStorage.setItem('maxHeight', maxHeight.value.toString());
   localStorage.setItem('columnCount', columnCount.value.toString());
   localStorage.setItem('blockAspectRatio', blockAspectRatio.value.toString());
+  localStorage.setItem('showDebugInfo', showDebugInfo.value.toString());
 });
 
 onBeforeUnmount(() => {
