@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {RouterLink, RouterView} from 'vue-router'
-import { ref } from 'vue'
+import {ref} from 'vue'
 
 const collapsed = ref(false)
 </script>
@@ -8,20 +8,20 @@ const collapsed = ref(false)
 <template>
   <a-layout id="components-layout-demo-custom-trigger">
     <a-layout-sider :trigger="null" collapsible v-model="collapsed" style="background: #fff" width="150">
-      <div class="logo" @click="()=> collapsed = !collapsed">
-        <img src="./assets/logo.svg" alt="" width="40px" height="40px"/>
-      </div>
+      <!--      <div class="logo" @click="()=> collapsed = !collapsed">-->
+      <!--        <img src="./assets/logo.svg" alt="" width="40px" height="40px"/>-->
+      <!--      </div>-->
       <a-menu theme="light" mode="inline" :defaultSelectedKeys="['1']">
         <a-menu-item key="1">
           <router-link to="/grid">
             <a-icon type="picture"/>
-            <span>Grid方式</span>
+            <span title="结尾不齐，而且会隐藏图片">Grid方式</span>
           </router-link>
         </a-menu-item>
         <a-menu-item key="2">
-          <router-link to="/row">
+          <router-link to="/self">
             <a-icon type="folder-open"/>
-            <span>绝对行方式</span>
+            <span>自行布局方式</span>
           </router-link>
         </a-menu-item>
         <a-menu-item key="3">

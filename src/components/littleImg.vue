@@ -17,9 +17,9 @@
             <span class="debug" title="index">{{ index }}</span>
             <span class="debug" title="表示图片是宽的还是高的">{{ WBTH ? '--' : '|' }}</span>
             <span class="debug" title="隐藏率">{{ hiddenPercent }}%</span>
-            <span class="debug" title="缩放率">{{ scalePercent }}%</span>
           </div>
           <div>
+            <span class="debug" title="缩放率">{{ scalePercent }}%</span>
             <span class="debug" title="原始宽高">{{ oW }} * {{ oH }}</span>
           </div>
           <div>
@@ -72,8 +72,8 @@ const {pic, blockWidth, blockHeight, maxHeight} = toRefs(props);
 
 const oW = ref(0);
 const oH = ref(0);
-const width = ref(null);
-const height = ref(null);
+const width = ref(null); //显示出的宽度
+const height = ref(null); // 显示出的高度
 const WBTH = ref(true);
 const hiddenPercent = ref(0); // 图片被隐藏了百分之多少
 const scalePercent = ref(0); // 图片被缩放了百分之多少
@@ -123,10 +123,14 @@ function mouseLeave() {
 function mouseMove(e) {
   if (!width.value || !height.value) return;
   if (WBTH.value) {
-    let rate = e.offsetX / width.value * -2;
+    let rate = (e.offsetX * 2 - width.value / 2) / width.value * -2;
+    if (rate > 0) rate = 0;
+    if (rate < -2) rate = -2;
     styleImg.transform = `translateX(${coverLength.value * rate}px)`
   } else {
-    let rate = e.offsetY / height.value * -2;
+    let rate = (e.offsetY * 2 - height.value / 2) / height.value * -2;
+    if (rate > 0) rate = 0;
+    if (rate < -2) rate = -2;
     styleImg.transform = `translateY(${coverLength.value * rate}px)`;
   }
 }
@@ -291,13 +295,19 @@ function computeCoverLength() {
 
 .img-wrapper-out > .img-wrapper {
   position: absolute;
-  right: 1px;
-  left: 1px;
-  bottom: 1px;
-  top: 1px;
-  border-radius: 2px;
-  /*  box-shadow: 0 6px 13px rgba(0, 0, 0, 0.25), 0 5px 5px rgba(0, 0, 0, 0.22); */
-  overflow: hidden;
+  right: 2px;
+  left: 2px;
+  bottom: 2px;
+  top: 2px;
+  border-radius: 6px;
+  overflow: hidden; /* 这里注释掉会有桌子上摆着照片的感觉， 但是左右边界要处理一下 */
+}
+
+.img-wrapper-out > .img-wrapper:hover {
+  overflow: visible; /* 这里注释掉会有桌子上摆着照片的感觉， 但是左右边界要处理一下 */
+  z-index: 9;
+  box-shadow: 0 6px 13px rgba(0, 0, 0, 0.25), 0 5px 5px rgba(0, 0, 0, 0.22);
+
 }
 
 .img-wrapper-out > .img-wrapper > .img {
